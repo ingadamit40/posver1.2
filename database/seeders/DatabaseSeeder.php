@@ -20,6 +20,11 @@ class DatabaseSeeder extends Seeder
         User::factory()->create([
             'name' => 'Test User',
             'email' => 'test@example.com',
+            'password' => bcrypt('password'),
+            'profile' => 'Admin',
+            'phone' => '1234567890',
+            'status' => 'Active',
+            'avatar' => null,
         ]);
     }
 }

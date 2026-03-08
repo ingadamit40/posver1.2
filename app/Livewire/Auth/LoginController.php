@@ -46,10 +46,10 @@ class LoginController extends Component
             // Redirige al usuario a la página deseada después de iniciar sesión
             session()->regenerate();
 
+            session()->flash('welcome', Auth::user()->name);
+
             // Redirige con parámetro simple
-            return redirect()->route('dashboard', [
-                'welcome' => Auth::user()->name, // Puedes pasar el nombre del usuario autenticado como parámetro
-            ]);
+            return redirect()->route('dashboard');
         }
 
         $this->reset(['email', 'password']);
