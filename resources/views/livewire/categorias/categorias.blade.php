@@ -17,7 +17,8 @@
                 </div>
 
                 <div class="widget-content mt-4">
-                    <livewire:common.data-table model="App\Models\Categoria" :columns="$columns" :perPage="5" />
+                    <livewire:common.data-table model="App\Models\Categoria" :columns="$columns" :perPage="5"
+                        refreshEvent="category-updated" />
                 </div>
                 @include('livewire.categorias.form')
             </div>

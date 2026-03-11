@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\On;
+use Livewire\Attributes\Validate;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 use Livewire\WithPagination;
@@ -22,9 +23,14 @@ class CategoriasController extends Component
 
     public $search = '';
 
-    public $name, $status = true;
+    #[Validate('required|min:3')]
+    public $name;
 
-    public $image, $image_current;
+    public $status = true;
+
+    #[Validate('nullable|image|max:2048')]
+    public $image;
+    public $image_current;
     public $category_id;
     public $componentName = 'Categorias';
     public $pageTitle = 'Listado';
@@ -55,25 +61,24 @@ class CategoriasController extends Component
     public $fields = [
 
         [
-            'name' => 'nombre',
+            'name' => 'name',
             'label' => 'Nombre',
             'type' => 'text',
-            'col' => 6
+            'col' => 6,
+            'rules' => 'required|min:3',
+            'placeholder' => 'Nombre Categoría'
         ],
 
         [
-            'name' => 'slug',
-            'label' => 'Slug',
-            'type' => 'text',
-            'col' => 6
+            'name' => 'image',
+            'label' => 'Imagen',
+            'type' => 'image',
+            'col' => 6,
+            'rules' => 'nullable|image|max:2048'
         ],
 
     ];
 
-    protected $rules = [
-        'name' => 'required|min:3',
-        'image' => 'nullable|image|max:2048',
-    ];
 
     // Este hook de Livewire se ejecuta antes de actualizar la propiedad $search
     public function updatingSearch(): void
@@ -91,10 +96,21 @@ class CategoriasController extends Component
         ]);
     }
 
+    #[On('formSubmitted')]
+    public function saveFromForm($data): void
+    {
+        //$this->validate();
+        $this->name = $data['name'] ?? null;
+        $this->image = $data['image'] ?? null;
+
+        //dd($this->name);
+        //$this->validate();
+
+        $this->save();
+    }
+
     public function save(): void
     {
-        $this->validate();
-
         $slug = Str::slug($this->name);
 
         $imagePath = $this->image_current;
@@ -116,6 +132,8 @@ class CategoriasController extends Component
                 'image' => $imagePath,
             ],
         );
+
+        $this->dispatch('category-updated');
 
         $this->dispatch('closeModal');
         $this->dispatch('notify', message: 'Categoría guardada correctamente');

@@ -9,6 +9,7 @@ class DataTable extends Component
 {
     use WithPagination;
 
+    public $refreshEvent; // Aquí recibimos "category-updated"
     public $model;
     public $columns = [];
     public $search = '';
@@ -17,6 +18,19 @@ class DataTable extends Component
     public $perPage = 10;
 
     protected $paginationTheme = 'bootstrap';
+
+    public function getListeners(): array
+    {
+        // Si nos pasaron un evento, lo escuchamos y ejecutamos '$refresh'
+        return $this->refreshEvent
+            ? [$this->refreshEvent => '$refresh']
+            : [];
+    }
+
+    public function refreshTable()
+    {
+        $this->resetPage(); // Vuelve a la pág 1 para ver el nuevo registro
+    }
 
     public function sortBy($field)
     {
